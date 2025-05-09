@@ -2,8 +2,13 @@ import docker
 from flask import Blueprint, jsonify, request
 
 docker_blueprint = Blueprint("docker_control", __name__)
-client = docker.DockerClient(base_url="unix://var/run/docker.sock")
 
+try:
+    client = docker.DockerClient(base_url="unix://var/run/docker.sock")
+except Exception as e:
+    client = None
+    print("⚠️ Docker not available, running in offline mode")
+    
 @docker_blueprint.route("/containers", methods=["GET"])
 def list_containers():
     """List all Docker containers"""
